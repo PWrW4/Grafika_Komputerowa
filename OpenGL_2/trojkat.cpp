@@ -1,4 +1,4 @@
-ï»¿//#include <Windows.h>
+//#include <Windows.h>
 //#include <GL//GL.h>
 //#include <GL/glut.h>
 //
@@ -9,11 +9,11 @@
 //
 //	glBegin(GL_TRIANGLES);
 //
-//	glColor3f(1.0f, 0.0f, 0.0f); // wierzchoÅ‚ek czerwony
+//	glColor3f(1.0f, 0.0f, 0.0f); // wierzcho³ek czerwony
 //	glVertex2f(0, 0.5);
-//	glColor3f(0.0f, 1.0f, 0.0f); // wierzchoÅ‚ek zielony
+//	glColor3f(0.0f, 1.0f, 0.0f); // wierzcho³ek zielony
 //	glVertex2f(-0.5, 0);
-//	glColor3f(0.0f, 0.0f, 1.0f); // wierzchoÅ‚ek niebieski
+//	glColor3f(0.0f, 0.0f, 1.0f); // wierzcho³ek niebieski
 //	glVertex2f(0.5, 0);
 //
 //	glEnd();
@@ -23,7 +23,7 @@
 //
 ///*************************************************************************************/
 //
-//// Funkcja ustalajÄ…ca stan renderowania
+//// Funkcja ustalaj¹ca stan renderowania
 //
 //
 //void MyInit(void)
@@ -36,7 +36,7 @@
 //
 ///*************************************************************************************/
 //
-//// GÅ‚Ã³wny punkt wejÅ›cia programu. Program dziaÅ‚a w trybie konsoli
+//// G³ówny punkt wejœcia programu. Program dzia³a w trybie konsoli
 //
 //
 //
@@ -45,22 +45,22 @@
 //	glutInit(&argc, argv);
 //	glutInitWindowSize(640, 500);
 //	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
-//	// Ustawienie trybu wyÅ›wietlania
-//	// GLUT_SINGLE - pojedynczy bufor wyÅ›wietlania
-//	// GLUT_RGBA - model kolorÃ³w RGB
+//	// Ustawienie trybu wyœwietlania
+//	// GLUT_SINGLE - pojedynczy bufor wyœwietlania
+//	// GLUT_RGBA - model kolorów RGB
 //
 //	glutCreateWindow("Triangle");
-//	// Utworzenie okna i okreÅ›lenie treÅ›ci napisu w nagÅ‚Ã³wku okna
+//	// Utworzenie okna i okreœlenie treœci napisu w nag³ówku okna
 //
 //
 //	glutDisplayFunc(RenderScene);
-//	// OkreÅ›lenie, Å¼e funkcja RenderScene bÄ™dzie funkcjÄ… zwrotnÄ… (callback)
-//	// Biblioteka GLUT bÄ™dzie wywoÅ‚ywaÅ‚a tÄ… funkcjÄ™ za kaÅ¼dym razem, gdy
-//	// trzeba bÄ™dzie przerysowaÄ‡ okno
+//	// Okreœlenie, ¿e funkcja RenderScene bêdzie funkcj¹ zwrotn¹ (callback)
+//	// Biblioteka GLUT bêdzie wywo³ywa³a t¹ funkcjê za ka¿dym razem, gdy
+//	// trzeba bêdzie przerysowaæ okno
 //
 //	MyInit();
-//	// Funkcja MyInit (zdefiniowana powyÅ¼ej) wykonuje wszelkie
-//	// inicjalizacje konieczne przed przystÄ…pieniem do renderowania
+//	// Funkcja MyInit (zdefiniowana powy¿ej) wykonuje wszelkie
+//	// inicjalizacje konieczne przed przyst¹pieniem do renderowania
 //
 //	glutMainLoop();
 //	// Funkcja uruchamia szkielet biblioteki GLUT

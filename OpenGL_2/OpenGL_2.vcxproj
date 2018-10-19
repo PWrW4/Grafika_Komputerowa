@@ -119,7 +119,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dywan.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="trojkat.cpp" />
+    <ClCompile Include="drzewko.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
