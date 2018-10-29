@@ -21,9 +21,6 @@
     <ClCompile Include="dywan.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="trojkat.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
     <ClCompile Include="drzewko.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>

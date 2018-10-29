@@ -1,125 +1,209 @@
-#include <iostream>
-#include <GL/glut.h>
-#include <GL/gl.h>
-#include <ctime>
-#include <Windows.h>
+ï»¿#include <stdio.h>
+#include <windows.h>
+#include <gl/gl.h>
+#include <gl/glut.h>
+#include <time.h>
 
 
+int n;
+double zoomFactor;
+typedef float point2[2];
+GLsizei horizontalSize;
+GLsizei verticalSize;
 
-void drawPoint(float x, float y, float size)
-{
-	glPointSize(size);
-	glBegin(GL_POINTS);	
-	glVertex2f(x, y);
+void drawTree() {
+
+
+	//deklaracja odwzorawan afinicznych
+	float f1[6] = { -0.67, -0.02, 0.0, -0.18, 0.81, 10.0 };
+	float f2[6] = { 0.4, 0.4, 0.0, -0.1, 0.4, 0.0 };
+	float f3[6] = { -0.4, -0.4, 0.0, -0.1, 0.4, 0.0 };
+	float f4[6] = { -0.1, 0.0, 0.0, 0.44, 0.44, -2.0 };
+
+	point2 point, newPoint;
+
+	//losujemy polozenie pierwszego punktu
+	point[0] = rand() % 90;
+	point[1] = rand() % 90;
+
+	// Ustawienie aktualnego koloru rysowania na zielony
+	glColor3f(0.0f, 1.0f, 0.0f);
+
+	//rysujemy pierwszy punkt
+	glBegin(GL_POINTS);
+	glVertex2fv(point);
 	glEnd();
+
+
+	int rnd;
+
+	for (int i = 0; i < n; i++) {
+
+		//losujemy numer odwzorowania z ktorego bedziemy teraz korzystac
+		rnd = rand() % 4;
+
+
+		//w zaleznosci od wylosowanego odwzorowania wyliczamy nowe wspolrzedne dla nowego punktu 
+		if (rnd == 0) {
+			newPoint[0] = f1[0] * point[0] + f1[1] * point[1] + f1[2];
+			newPoint[1] = f1[3] * point[0] + f1[4] * point[1] + f1[5];
+		}
+		else if (rnd == 1) {
+			newPoint[0] = f2[0] * point[0] + f2[1] * point[1] + f2[2];
+			newPoint[1] = f2[3] * point[0] + f2[4] * point[1] + f2[5];
+		}
+		else if (rnd == 2) {
+			newPoint[0] = f3[0] * point[0] + f3[1] * point[1] + f3[2];
+			newPoint[1] = f3[3] * point[0] + f3[4] * point[1] + f3[5];
+		}
+		else {
+			newPoint[0] = f4[0] * point[0] + f4[1] * point[1] + f4[2];
+			newPoint[1] = f4[3] * point[0] + f4[4] * point[1] + f4[5];
+		}
+
+
+		point[0] = newPoint[0];
+		point[1] = newPoint[1];
+
+
+		//rysujemy nastepny punkt
+		glBegin(GL_POINTS);
+		glVertex2fv(point);
+		glEnd();
+
+	}
 }
 
+
+
+// Funkcaja okreï¿½lajï¿½ca, co ma byï¿½ rysowane
+// (zawsze wywoï¿½ywana, gdy trzeba przerysowaï¿½ scenï¿½)
+//sluzy takze do kontroli zachowania proporcji rysowanych obiektï¿½w niezaleï¿½nie od rozmiarï¿½w okna graficznego
 void RenderScene(void)
 {
-	int n = 10000;
+
+	GLfloat AspectRatio;
+	// Deklaracja zmiennej AspectRatio okreï¿½lajï¿½cej proporcjï¿½ wymiarï¿½w okna
+
+	if (verticalSize == 0)
+		// Zabezpieczenie pzred dzieleniem przez 0
+		verticalSize = 1;
+
+
+	glViewport(0, 0, horizontalSize, verticalSize);
+	// Ustawienie wielkoï¿½ciokna okna urzï¿½dzenia (Viewport)
+	// W tym przypadku od (0,0) do (horizontalSize, verticalSize)
+
+	glMatrixMode(GL_PROJECTION);
+	// Okreï¿½lenie ukï¿½adu wspï¿½rzï¿½dnych obserwatora
+
+	glLoadIdentity();
+	// Okreï¿½lenie przestrzeni ograniczajï¿½cej
+
+	AspectRatio = (GLfloat)horizontalSize / (GLfloat)verticalSize;
+	// Wyznaczenie wspï¿½czynnika proporcji okna
+
+	// Gdy okno na ekranie nie jest kwadratem wymagane jest
+	// okreï¿½lenie okna obserwatora.
+	// Pozwala to zachowaï¿½ wï¿½aï¿½ciwe proporcje rysowanego obiektu
+	// Do okreï¿½lenia okna obserwatora sï¿½uï¿½y funkcja glOrtho(...)
+	if (horizontalSize <= verticalSize)
+
+		glOrtho(-100.0, 100, -100.0 / AspectRatio, 100.0 / AspectRatio, 1.0, -1.0);
+
+	else
+
+		glOrtho(-100.0*AspectRatio, 100.0*AspectRatio, -100.0, 100.0, 1.0, -1.0);
+
+
+	glMatrixMode(GL_MODELVIEW);
+	// Okreï¿½lenie ukï¿½adu wspï¿½rzï¿½dnych     
+
+	glLoadIdentity();
+
 	glClear(GL_COLOR_BUFFER_BIT);
+	// Czyszczenie okna aktualnym kolorem czyszczï¿½cym
 
-	float x = 10.0f;
-	float y = 10.0f;
+	drawTree();
+	//wywolanie rysowania dla wyzej ustawionych parametrow
+
+	glMatrixMode(GL_PROJECTION);
+	// Okreï¿½lenie ukï¿½adu wspï¿½rzï¿½dnych obserwatora
+
+	glLoadIdentity();
 
 
+	glMatrixMode(GL_MODELVIEW);
+	// Okreï¿½lenie ukï¿½adu wspï¿½rzï¿½dnych     
 
-	for (int i = 0;i<100;i++)
-	{
-		drawPoint(x, y, 1.0f);
-		x++;
-	}
+	glLoadIdentity();
+
+
+	drawTree();
+	//wywolanie rysowania dla wyzej ustawionych parametrow
 
 	glFlush();
+	// Przekazanie poleceï¿½ rysujï¿½cych do wykonania
 }
 
 
 void MyInit(void)
 {
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	// Kolor okna wnêtrza okna - ustawiono na szary
+	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+	// Kolor okna wnï¿½trza okna - ustawiono na szary
 }
+
 
 void ChangeSize(GLsizei horizontal, GLsizei vertical)
-// Parametry horizontal i vertical (szerokoœæ i wysokoœæ okna) s¹
-// przekazywane do funkcji za ka¿dym razem, gdy zmieni siê rozmiar okna
+// Parametry horizontal i vertical (szerokoï¿½ï¿½ i wysokoï¿½ï¿½ okna) sï¿½
+// przekazywane do funkcji za kaï¿½dym razem, gdy zmieni siï¿½ rozmiar okna
 {
-	GLfloat AspectRatio;
-	// Deklaracja zmiennej AspectRatio okreœlaj¹cej proporcjê wymiarów okna
+	verticalSize = vertical;
+	horizontalSize = horizontal;
+	//zapisujemy je wtedy do zmiennych globalnych, aby funkcja rysujaca mogla z nich skorzystac
 
-	if (vertical == 0)
-		// Zabezpieczenie pzred dzieleniem przez 0
-		vertical = 1;
-	
-	glutInitWindowSize(600, 400);
 
-	glViewport(0, 0, horizontal, vertical);
-	// Ustawienie wielkoœciokna okna urz¹dzenia (Viewport)
-	// W tym przypadku od (0,0) do (horizontal, vertical)
-
-	glMatrixMode(GL_PROJECTION);
-	// Okreœlenie uk³adu wspó³rzêdnych obserwatora
-
-	glLoadIdentity();
-	// Okreœlenie przestrzeni ograniczaj¹cej
-
-	AspectRatio = (GLfloat)horizontal / (GLfloat)vertical;
-	// Wyznaczenie wspó³czynnika proporcji okna
-
-	// Gdy okno na ekranie nie jest kwadratem wymagane jest
-	// okreœlenie okna obserwatora.
-	// Pozwala to zachowaæ w³aœciwe proporcje rysowanego obiektu
-	// Do okreœlenia okna obserwatora s³u¿y funkcja glOrtho(...)
-
-	if (horizontal <= vertical)
-		glOrtho(-100.0, 100.0, -100.0 / AspectRatio, 100.0 / AspectRatio, 1.0, -1.0);
-	else
-		glOrtho(-100.0*AspectRatio, 100.0*AspectRatio, -100.0, 100.0, 1.0, -1.0);
-
-	glMatrixMode(GL_MODELVIEW);
-	// Okreœlenie uk³adu wspó³rzêdnych    
-	glLoadIdentity();
+	glutPostRedisplay();
+	//i wywolujemy ponowne renderowanie
 }
+
 
 
 void main(int argc, char* argv[])
 {
+	glutInit(&argc, argv);
+	n = 10000;
+	//ustawia liczbe punktow do narysowania
+
+	zoomFactor = 1.2;
+	//ustawia startowy wspolczynnik powiekszenia; dla 1 - brak powiekszenia
 
 	srand(time(NULL));
+	//inicjalizacja dla funkcji rand
+
 
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
-	// Ustawienie trybu wyœwietlania
-	// GLUT_SINGLE - pojedynczy bufor wyœwietlania
-	// GLUT_RGBA - model kolorów RGB
+	// Ustawienie trybu wyï¿½wietlania
+	// GLUT_SINGLE - pojedynczy bufor wyï¿½wietlania
+	// GLUT_RGBA - model kolorï¿½w RGB
 
-	glutInit(&argc, argv);
-	glutCreateWindow("Dywan Sierpiñskiego");
-	// Utworzenie okna i okreœlenie treœci napisu w nag³ówku okna
+	glutCreateWindow("Zadanie domowe 3 z lab2");
+	// Utworzenie okna i okreï¿½lenie treï¿½ci napisu w nagï¿½ï¿½wku okna
 
 	glutDisplayFunc(RenderScene);
-	// Okreœlenie, ¿e funkcja RenderScene bêdzie funkcj¹ zwrotn¹ (callback)
-	// Biblioteka GLUT bêdzie wywo³ywa³a t¹ funkcjê za ka¿dym razem, gdy
-	// trzeba bêdzie przerysowaæ okno
+	// Okreï¿½lenie, ï¿½e funkcja RenderScene bï¿½dzie funkcjï¿½ zwrotnï¿½ (callback)
+	// Biblioteka GLUT bï¿½dzie wywoï¿½ywaï¿½a tï¿½ funkcjï¿½ za kaï¿½dym razem, gdy
+	// trzeba bï¿½dzie przerysowaï¿½ okno
 
 	glutReshapeFunc(ChangeSize);
-	// Dla aktualnego okna ustala funkcjê zwrotn¹ odpowiedzialn¹ za
+	// Dla aktualnego okna ustala funkcjï¿½ zwrotnï¿½ odpowiedzialnï¿½ za
 	// zmiany rozmiaru okna
 
 	MyInit();
-	// Funkcja MyInit (zdefiniowana powy¿ej) wykonuje wszelkie
-	// inicjalizacje konieczne przed przyst¹pieniem do renderowania
+	// Funkcja MyInit (zdefiniowana powyï¿½ej) wykonuje wszelkie 
+	// inicjalizacje konieczneprzed przystï¿½pieniem do renderowania
+
 
 	glutMainLoop();
 	// Funkcja uruchamia szkielet biblioteki GLUT
 }
-
-// Uruchomienie programu: Ctrl + F5 lub menu Debugowanie > Uruchom bez debugowania
-// Debugowanie programu: F5 lub menu Debugowanie > Rozpocznij debugowanie
-//
-//// Porady dotycz¹ce rozpoczynania pracy:
-//   1. U¿yj okna Eksploratora rozwi¹zañ, aby dodaæ pliki i zarz¹dzaæ nimi
-//   2. U¿yj okna programu Team Explorer, aby nawi¹zaæ po³¹czenie z kontrol¹ Ÿród³a
-//   3. U¿yj okna Dane wyjœciowe, aby sprawdziæ dane wyjœciowe kompilacji i inne komunikaty
-//   4. U¿yj okna Lista b³êdów, aby zobaczyæ b³êdy
-//   5. Wybierz pozycjê Projekt > Dodaj nowy element, aby utworzyæ nowe pliki kodu, lub wybierz pozycjê Projekt > Dodaj istniej¹cy element, aby dodaæ istniej¹ce pliku kodu do projektu
-//   6. Aby w przysz³oœci ponownie otworzyæ ten projekt, przejdŸ do pozycji Plik > Otwórz > Projekt i wybierz plik sln
