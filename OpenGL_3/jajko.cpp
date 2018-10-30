@@ -20,9 +20,24 @@ struct clors
 	float B;
 };
 
+//static GLfloat theta[] = { 0.0, 0.0, 0.0 }; // trzy kąty obrotu
+
+static GLfloat theta = 0.0;   // kąt obrotu obiektu
+static GLfloat pix2angle;     // przelicznik pikseli na stopnie
+
+static GLint status = 0;       // stan klawiszy myszy
+							   // 0 - nie naciśnięto żadnego klawisza
+							   // 1 - naciśnięty zostać lewy klawisz
+
+static int x_pos_old = 0;       // poprzednia pozycja kursora myszy
+
+static int delta_x = 0;        // różnica pomiędzy pozycją bieżącą
+									  // i poprzednią kursora myszy
+
+
 const double MOJE_PI = 3.14159265359;
 int model = 2;
-const int N = 20;
+const int N = 15;
 clors colors[N][N];
 
 //równania do krzywej Beziera
@@ -41,13 +56,11 @@ double z(double u, double v)
 	return (-90.0 * u*u*u*u*u + 225 * u*u*u*u - 270 * u*u*u + 180 * u*u - 45 * u)*sin(MOJE_PI*v);
 }
 
-
-
 void Egg()
 {
 
 	point3 tab3D[N][N];//przestrzeń 3D
-	point2 kwadratJednostkowy[N][N];
+	point2 KwJed[N][N];
 	//double u = 0, v = 0;
 	double webLevel = 1.0f / N;
 
@@ -55,12 +68,9 @@ void Egg()
 	{
 		for (int i = 0; i < N; i++)
 		{
-			kwadratJednostkowy[i][j].u = (1.0f / N) * i;
-			kwadratJednostkowy[i][j].v = (1.0f / N) * j;
-
-			//std::cout << "u: " << kwadratJednostkowy[i][j].u << ", v: " << kwadratJednostkowy[i][j].v << "\n";
+			KwJed[i][j].u = (1.0f / (N-1)) * i;
+			KwJed[i][j].v = (1.0f / (N-1)) * j;
 		}
-		//std::cout << "\n";
 	}
 
 	glTranslated(0, -5, 0);//przesunięcie w dół jajka
@@ -74,9 +84,7 @@ void Egg()
 		{
 			for (int i = 0; i < N; i++)
 			{
-				//std::cout << "u: " << kwadratJednostkowy[i][j].u << ", v: " << kwadratJednostkowy[i][j].v << "\n";
-				//glVertex2f(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j].v); //punkty płaszczyzny dziedziny parametrycznej
-				glVertex3f(x(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j].v), y(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j].v), z(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j].v));
+				glVertex3f(x(KwJed[i][j].u, KwJed[i][j].v), y(KwJed[i][j].u, KwJed[i][j].v), z(KwJed[i][j].u, KwJed[i][j].v));
 			}
 		}
 		glEnd();
@@ -89,26 +97,27 @@ void Egg()
 			for (int i = 0; i < N; i++)
 			{
 				if (i - 1 >= 0)
-					glVertex3f(z(kwadratJednostkowy[i - 1][j].u, kwadratJednostkowy[i][j].v), y(kwadratJednostkowy[i - 1][j].u, kwadratJednostkowy[i][j].v), x(kwadratJednostkowy[i - 1][j].u, kwadratJednostkowy[i][j].v));
+					glVertex3f(z(KwJed[i - 1][j].u, KwJed[i][j].v), y(KwJed[i - 1][j].u, KwJed[i][j].v), x(KwJed[i - 1][j].u, KwJed[i][j].v));
 				else
-					glVertex3f(z(kwadratJednostkowy[N - 1][j].u, kwadratJednostkowy[i][j].v), y(kwadratJednostkowy[N - 1][j].u, kwadratJednostkowy[i][j].v), x(kwadratJednostkowy[N - 1][j].u, kwadratJednostkowy[i][j].v));
-				glVertex3f(z(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j].v), y(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j].v), x(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j].v));
+					glVertex3f(z(KwJed[N - 1][j].u, KwJed[i][j].v), y(KwJed[N - 1][j].u, KwJed[i][j].v), x(KwJed[N - 1][j].u, KwJed[i][j].v));
+				glVertex3f(z(KwJed[i][j].u, KwJed[i][j].v), y(KwJed[i][j].u, KwJed[i][j].v), x(KwJed[i][j].u, KwJed[i][j].v));
 
 				if (i - 1 >= 0)
-					glVertex3f(z(kwadratJednostkowy[i - 1][j].u, kwadratJednostkowy[i][j].v), y(kwadratJednostkowy[i - 1][j].u, kwadratJednostkowy[i][j].v), x(kwadratJednostkowy[i - 1][j].u, kwadratJednostkowy[i][j].v));
+					glVertex3f(z(KwJed[i - 1][j].u, KwJed[i][j].v), y(KwJed[i - 1][j].u, KwJed[i][j].v), x(KwJed[i - 1][j].u, KwJed[i][j].v));
 				else
-					glVertex3f(z(kwadratJednostkowy[N - 1][j].u, kwadratJednostkowy[i][j].v), y(kwadratJednostkowy[N - 1][j].u, kwadratJednostkowy[i][j].v), x(kwadratJednostkowy[N - 1][j].u, kwadratJednostkowy[i][j].v));
+					glVertex3f(z(KwJed[N - 1][j].u, KwJed[i][j].v), y(KwJed[N - 1][j].u, KwJed[i][j].v), x(KwJed[N - 1][j].u, KwJed[i][j].v));
 				if (j - 1 >= 0)
-					glVertex3f(z(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j - 1].v), y(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j - 1].v), x(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j - 1].v));
+					glVertex3f(z(KwJed[i][j].u, KwJed[i][j - 1].v), y(KwJed[i][j].u, KwJed[i][j - 1].v), x(KwJed[i][j].u, KwJed[i][j - 1].v));
 				else
-					glVertex3f(z(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][N - 1].v), y(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][N - 1].v), x(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][N - 1].v));
+					glVertex3f(z(KwJed[i][N - 1].u, KwJed[i][j].v), y(KwJed[i][N - 1].u, KwJed[i][j - 1].v), x(KwJed[i][j].u, KwJed[i][j].v));
 
 				if (j - 1 >= 0)
-					glVertex3f(z(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j - 1].v), y(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j - 1].v), x(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j - 1].v));
+					glVertex3f(z(KwJed[i][j].u, KwJed[i][j - 1].v), y(KwJed[i][j].u, KwJed[i][j - 1].v), x(KwJed[i][j].u, KwJed[i][j - 1].v));
 				else
-					glVertex3f(z(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][N - 1].v), y(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][N - 1].v), x(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][N - 1].v));
+					glVertex3f(z(KwJed[i][j].u, KwJed[i][0].v), y(KwJed[i][j].u, KwJed[i][0].v), x(KwJed[i][j].u, KwJed[i][0].v));
 
-				glVertex3f(z(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j].v), y(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j].v), x(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j].v));
+				glVertex3f(z(KwJed[i][j].u, KwJed[i][j].v), y(KwJed[i][j].u, KwJed[i][j].v), x(KwJed[i][j].u, KwJed[i][j].v));
+			
 			}
 		}
 		glEnd();
@@ -119,13 +128,103 @@ void Egg()
 		for (int j = 0; j < N; j++)
 		{
 			for (int i = 0; i < N; i++)
-			{
-				glColor3f(colors[i][j].R, colors[i][j].G, colors[i][j].B);
+			{		
 
 				glBegin(GL_TRIANGLES);
-				glVertex3f(x(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j].v), y(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j].v), z(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j].v));
-				glVertex3f(x(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j].v), y(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j].v), z(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j].v));
-				glVertex3f(x(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j].v), y(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j].v), z(kwadratJednostkowy[i][j].u, kwadratJednostkowy[i][j].v));
+				if(i<N-1 && j<N-1)
+				{
+//					if (i==0 && j!=0)
+//					{
+//						glColor3f(colors[i][N-1].R, colors[i][N-1].G, colors[i][N-1].B);
+//						glVertex3f(x(KwJed[i][j].u, KwJed[i][j].v), y(KwJed[i][j].u, KwJed[i][j].v), z(KwJed[i][j].u, KwJed[i][j].v));
+//						glColor3f(colors[i + 1][N-1].R, colors[i + 1][N-1].G, colors[i + 1][N-1].B);
+//						glVertex3f(x(KwJed[i + 1][N-1].u, KwJed[i + 1][N-1].v), y(KwJed[i + 1][N-1].u, KwJed[i + 1][N-1].v), z(KwJed[i + 1][N-1].u, KwJed[i + 1][N-1].v));
+//						glColor3f(colors[i + 1][j + 1].R, colors[i + 1][j + 1].G, colors[i + 1][j + 1].B);
+//						glVertex3f(x(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v), y(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v), z(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v));
+//
+//						glColor3f(colors[i][N-1].R, colors[i][N-1].G, colors[i][N-1].B);
+//						glVertex3f(x(KwJed[i][j].u, KwJed[i][j].v), y(KwJed[i][j].u, KwJed[i][j].v), z(KwJed[i][j].u, KwJed[i][j].v));
+//						glColor3f(colors[i][j + 1].R, colors[i][j + 1].G, colors[i][j + 1].B);
+//						glVertex3f(x(KwJed[i][j + 1].u, KwJed[i][j + 1].v), y(KwJed[i][j + 1].u, KwJed[i][j + 1].v), z(KwJed[i][j + 1].u, KwJed[i][j + 1].v));
+//						glColor3f(colors[i + 1][j + 1].R, colors[i + 1][j + 1].G, colors[i + 1][j + 1].B);
+//						glVertex3f(x(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v), y(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v), z(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v));
+//
+//
+//					}
+//					else
+//					{
+//						if (i != 0 && j == 0)
+//						{
+//							glColor3f(colors[N-1][j].R, colors[N-1][j].G, colors[N-1][j].B);
+//							glVertex3f(x(KwJed[i][j].u, KwJed[i][j].v), y(KwJed[i][j].u, KwJed[i][j].v), z(KwJed[i][j].u, KwJed[i][j].v));
+//							glColor3f(colors[i + 1][j].R, colors[i + 1][j].G, colors[i + 1][j].B);
+//							glVertex3f(x(KwJed[i + 1][j].u, KwJed[i + 1][j].v), y(KwJed[i + 1][j].u, KwJed[i + 1][j].v), z(KwJed[i + 1][j].u, KwJed[i + 1][j].v));
+//							glColor3f(colors[i + 1][j + 1].R, colors[i + 1][j + 1].G, colors[i + 1][j + 1].B);
+//							glVertex3f(x(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v), y(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v), z(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v));
+//
+//							glColor3f(colors[N-1][j].R, colors[N-1][j].G, colors[N-1][j].B);
+//							glVertex3f(x(KwJed[i][j].u, KwJed[i][j].v), y(KwJed[i][j].u, KwJed[i][j].v), z(KwJed[i][j].u, KwJed[i][j].v));
+//							glColor3f(colors[N-1][j + 1].R, colors[N-1][j + 1].G, colors[N-1][j + 1].B);
+//							glVertex3f(x(KwJed[N-1][j + 1].u, KwJed[N-1][j + 1].v), y(KwJed[N-1][j + 1].u, KwJed[N-1][j + 1].v), z(KwJed[N-1][j + 1].u, KwJed[N-1][j + 1].v));
+//							glColor3f(colors[i + 1][j + 1].R, colors[i + 1][j + 1].G, colors[i + 1][j + 1].B);
+//							glVertex3f(x(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v), y(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v), z(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v));
+//
+//						}
+//						else
+//						{
+//							if (i==0 && j==0)
+//							{
+//								glColor3f(colors[i][j].R, colors[i][j].G, colors[i][j].B);
+//								glVertex3f(x(KwJed[i][j].u, KwJed[i][j].v), y(KwJed[i][j].u, KwJed[i][j].v), z(KwJed[i][j].u, KwJed[i][j].v));
+//								glColor3f(colors[i + 1][j].R, colors[i + 1][j].G, colors[i + 1][j].B);
+//								glVertex3f(x(KwJed[i + 1][j].u, KwJed[i + 1][j].v), y(KwJed[i + 1][j].u, KwJed[i + 1][j].v), z(KwJed[i + 1][j].u, KwJed[i + 1][j].v));
+//								glColor3f(colors[i + 1][j + 1].R, colors[i + 1][j + 1].G, colors[i + 1][j + 1].B);
+//								glVertex3f(x(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v), y(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v), z(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v));
+//
+//								glColor3f(colors[i][j].R, colors[i][j].G, colors[i][j].B);
+//								glVertex3f(x(KwJed[i][j].u, KwJed[i][j].v), y(KwJed[i][j].u, KwJed[i][j].v), z(KwJed[i][j].u, KwJed[i][j].v));
+//								glColor3f(colors[i][j + 1].R, colors[i][j + 1].G, colors[i][j + 1].B);
+//								glVertex3f(x(KwJed[i][j + 1].u, KwJed[i][j + 1].v), y(KwJed[i][j + 1].u, KwJed[i][j + 1].v), z(KwJed[i][j + 1].u, KwJed[i][j + 1].v));
+//								glColor3f(colors[i + 1][j + 1].R, colors[i + 1][j + 1].G, colors[i + 1][j + 1].B);
+//								glVertex3f(x(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v), y(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v), z(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v));
+//
+//							}
+//							else
+//							{
+//								glColor3f(colors[i][j].R, colors[i][j].G, colors[i][j].B);
+//								glVertex3f(x(KwJed[i][j].u, KwJed[i][j].v), y(KwJed[i][j].u, KwJed[i][j].v), z(KwJed[i][j].u, KwJed[i][j].v));
+//								glColor3f(colors[i + 1][j].R, colors[i + 1][j].G, colors[i + 1][j].B);
+//								glVertex3f(x(KwJed[i + 1][j].u, KwJed[i + 1][j].v), y(KwJed[i + 1][j].u, KwJed[i + 1][j].v), z(KwJed[i + 1][j].u, KwJed[i + 1][j].v));
+//								glColor3f(colors[i + 1][j + 1].R, colors[i + 1][j + 1].G, colors[i + 1][j + 1].B);
+//								glVertex3f(x(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v), y(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v), z(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v));
+//
+//								glColor3f(colors[i][j].R, colors[i][j].G, colors[i][j].B);
+//								glVertex3f(x(KwJed[i][j].u, KwJed[i][j].v), y(KwJed[i][j].u, KwJed[i][j].v), z(KwJed[i][j].u, KwJed[i][j].v));
+//								glColor3f(colors[i][j + 1].R, colors[i][j + 1].G, colors[i][j + 1].B);
+//								glVertex3f(x(KwJed[i][j + 1].u, KwJed[i][j + 1].v), y(KwJed[i][j + 1].u, KwJed[i][j + 1].v), z(KwJed[i][j + 1].u, KwJed[i][j + 1].v));
+//								glColor3f(colors[i + 1][j + 1].R, colors[i + 1][j + 1].G, colors[i + 1][j + 1].B);
+//								glVertex3f(x(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v), y(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v), z(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v));
+//
+//							}
+//						}
+//					}
+					glColor3f(colors[i][j].R, colors[i][j].G, colors[i][j].B);
+					glVertex3f(x(KwJed[i][j].u, KwJed[i][j].v), y(KwJed[i][j].u, KwJed[i][j].v), z(KwJed[i][j].u, KwJed[i][j].v));
+					glColor3f(colors[i + 1][j].R, colors[i + 1][j].G, colors[i + 1][j].B);
+					glVertex3f(x(KwJed[i + 1][j].u, KwJed[i + 1][j].v), y(KwJed[i + 1][j].u, KwJed[i + 1][j].v), z(KwJed[i + 1][j].u, KwJed[i + 1][j].v));
+					glColor3f(colors[i + 1][j + 1].R, colors[i + 1][j + 1].G, colors[i + 1][j + 1].B);
+					glVertex3f(x(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v), y(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v), z(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v));
+
+					glColor3f(colors[i][j].R, colors[i][j].G, colors[i][j].B);
+					glVertex3f(x(KwJed[i][j].u, KwJed[i][j].v), y(KwJed[i][j].u, KwJed[i][j].v), z(KwJed[i][j].u, KwJed[i][j].v));
+					glColor3f(colors[i][j + 1].R, colors[i][j + 1].G, colors[i][j + 1].B);
+					glVertex3f(x(KwJed[i][j + 1].u, KwJed[i][j + 1].v), y(KwJed[i][j + 1].u, KwJed[i][j + 1].v), z(KwJed[i][j + 1].u, KwJed[i][j + 1].v));
+					glColor3f(colors[i + 1][j + 1].R, colors[i + 1][j + 1].G, colors[i + 1][j + 1].B);
+					glVertex3f(x(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v), y(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v), z(KwJed[i + 1][j + 1].u, KwJed[i + 1][j + 1].v));
+
+									   					 					
+				}
+				
 				glEnd();
 			}
 		}
@@ -187,17 +286,30 @@ void RenderScene(void)
 	glLoadIdentity();
 	// Czyszczenie macierzy bieżącej
 
-	Egg(); //rysowanie jajka
-
 	Axes();
 	// Narysowanie osi przy pomocy funkcji zdefiniowanej wyżej
+
+	if (status == 1)                     // jeśli lewy klawisz myszy wcięnięty
+	{
+		theta += delta_x * pix2angle;    // modyfikacja kąta obrotu o kat proporcjonalny
+	}                                  // do różnicy położeń kursora myszy
+
+	glRotatef(theta, 0.0, 1.0, 0.0);  //obrót obiektu o nowy kąt
+
+
+//	glRotatef(theta[0], 0.1, 0.0, 0.0);
+//
+//	glRotatef(theta[1], 0.0, 0.1, 0.0);
+//
+//	glRotatef(theta[2], 0.0, 0.0, 0.5);
+
+	Egg(); //rysowanie jajka
 
 	glFlush();
 	// Przekazanie poleceń rysujących do wykonania
 
 	glutSwapBuffers();
-	//
-
+	
 }
 /*************************************************************************************/
 // Funkcja ustalająca stan renderowania
@@ -216,6 +328,7 @@ void MyInit(void)
 void ChangeSize(GLsizei horizontal, GLsizei vertical)
 {
 
+	pix2angle = 360.0 / (float)horizontal;  // przeliczenie pikseli na stopnie
 	GLfloat AspectRatio;
 	// Deklaracja zmiennej AspectRatio  określającej proporcję
 	// wymiarów okna 
@@ -259,21 +372,72 @@ void ChangeSize(GLsizei horizontal, GLsizei vertical)
 }
 
 
+
+//void spinEgg()
+//{
+//
+//	theta[0] -= 0.005;
+//	if (theta[0] > 360.0) theta[0] -= 360.0;
+//
+//	theta[1] -= 0.005;
+//	if (theta[1] > 360.0) theta[1] -= 360.0;
+//
+//	theta[2] -= 0.005;
+//	if (theta[2] > 360.0) theta[2] -= 360.0;
+//
+//	glutPostRedisplay(); //odświeżenie zawartości aktualnego okna
+//}
+
+
+
+/*************************************************************************************/
+// Funkcja "bada" stan myszy i ustawia wartości odpowiednich zmiennych globalnych
+
+void Mouse(int btn, int state, int x, int y)
+{
+
+
+	if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+	{
+		x_pos_old = x;        // przypisanie aktualnie odczytanej pozycji kursora
+							 // jako pozycji poprzedniej
+		status = 1;          // wcięnięty został lewy klawisz myszy
+	}
+	else
+
+		status = 0;          // nie został wcięnięty żaden klawisz
+}
+
+/*************************************************************************************/
+// Funkcja "monitoruje" położenie kursora myszy i ustawia wartości odpowiednich
+// zmiennych globalnych
+
+void Motion(GLsizei x, GLsizei y)
+{
+
+	delta_x = x - x_pos_old;     // obliczenie różnicy położenia kursora myszy
+
+	x_pos_old = x;            // podstawienie bieżącego położenia jako poprzednie
+
+	glutPostRedisplay();     // przerysowanie obrazu sceny
+}
+
+
 void keys(unsigned char key, int x, int y)
 {
 	if (key == '1')
 	{
-		std::cout << "p\n";
+		std::cout << "1\n";
 		model = 1;
 	}
 	if (key == '2')
 	{
-		std::cout << "w\n";
+		std::cout << "2\n";
 		model = 2;
 	}
 	if (key == '3')
 	{
-		std::cout << "s\n";
+		std::cout << "3\n";
 		model = 3;
 	}
 	RenderScene(); // przerysowanie obrazu sceny
@@ -313,6 +477,14 @@ void main(int argc, char* argv[])
 	glutReshapeFunc(ChangeSize);
 	// Dla aktualnego okna ustala funkcję zwrotną odpowiedzialną
 	// zazmiany rozmiaru okna      
+
+	//glutIdleFunc(spinEgg);
+
+	glutMouseFunc(Mouse);
+	// Ustala funkcję zwrotną odpowiedzialną za badanie stanu myszy
+
+	glutMotionFunc(Motion);
+	// Ustala funkcję zwrotną odpowiedzialną za badanie ruchu myszy
 
 	MyInit();
 	// Funkcja MyInit() (zdefiniowana powyżej) wykonuje wszelkie
