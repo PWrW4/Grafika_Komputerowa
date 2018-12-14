@@ -15,10 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="jajko.cpp">
+    <ClCompile Include="czajnik.cpp">
       <Filter>Pliki zasobów</Filter>
     </ClCompile>
-    <ClCompile Include="czajnik.cpp">
+    <ClCompile Include="jajkoV1.cpp">
+      <Filter>Pliki zasobów</Filter>
+    </ClCompile>
+    <ClCompile Include="jajkoV2.cpp">
       <Filter>Pliki zasobów</Filter>
     </ClCompile>
   </ItemGroup>

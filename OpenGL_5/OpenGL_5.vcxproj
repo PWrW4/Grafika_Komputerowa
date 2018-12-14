@@ -116,7 +116,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="czajnik.cpp" />
-    <ClCompile Include="jajko.cpp" />
+    <ClCompile Include="jajkoV2.cpp" />
+    <ClCompile Include="jajkoV1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
