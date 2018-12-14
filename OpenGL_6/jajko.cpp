@@ -138,35 +138,75 @@ void Egg() {
 	}
 	for (int i = 0; i < n - 1; i++) {
 		for (int j = 0; j < n - 1; j++) {
+			if (i<n/2)
+			{
+				glBegin(GL_TRIANGLES);
+				glNormal3fv(vektorNorm[i][j + 1]);
+				glTexCoord2f(tabTekstury[i][j + 1][0], tabTekstury[i][j + 1][1]);
+				glVertex3fv(vectors3d[i][j + 1]);
 
+				glNormal3fv(vektorNorm[i + 1][j]);
+				glTexCoord2f(tabTekstury[i + 1][j][0], tabTekstury[i + 1][j][1]);
+				glVertex3fv(vectors3d[i + 1][j]);
+
+				glNormal3fv(vektorNorm[i + 1][j + 1]);
+				glTexCoord2f(tabTekstury[i + 1][j + 1][0], tabTekstury[i + 1][j + 1][1]);
+				glVertex3fv(vectors3d[i + 1][j + 1]);
+				glEnd();
+
+
+				glBegin(GL_TRIANGLES);
+				glNormal3fv(vektorNorm[i][j]);
+				glTexCoord2f(tabTekstury[i][j][0], tabTekstury[i][j][1]);
+				glVertex3fv(vectors3d[i][j]);
+
+				glNormal3fv(vektorNorm[i + 1][j]);
+				glTexCoord2f(tabTekstury[i + 1][j][0], tabTekstury[i + 1][j][1]);
+				glVertex3fv(vectors3d[i + 1][j]);
+
+				glNormal3fv(vektorNorm[i][j + 1]);
+				glTexCoord2f(tabTekstury[i][j + 1][0], tabTekstury[i][j + 1][1]);
+				glVertex3fv(vectors3d[i][j + 1]);
+				glEnd();
+			}
+			else
+			{
 			glBegin(GL_TRIANGLES);
-			glNormal3fv(vektorNorm[i][j + 1]);
-			glTexCoord2f(tabTekstury[i][j+1][0], tabTekstury[i][j+1][1]);
-			glVertex3fv(vectors3d[i][j + 1]);
+			glNormal3fv(vektorNorm[i + 1][j + 1]);
+			glTexCoord2f(tabTekstury[i + 1][j + 1][0], tabTekstury[i + 1][j + 1][1]);
+			glVertex3fv(vectors3d[i + 1][j + 1]);
+
+
 
 			glNormal3fv(vektorNorm[i + 1][j]);
 			glTexCoord2f(tabTekstury[i+1][j][0], tabTekstury[i+1][j][1]);
 			glVertex3fv(vectors3d[i + 1][j]);
 
-			glNormal3fv(vektorNorm[i + 1][j + 1]);
-			glTexCoord2f(tabTekstury[i+1][j+1][0], tabTekstury[i+1][j+1][1]);
-			glVertex3fv(vectors3d[i + 1][j + 1]);
+			glNormal3fv(vektorNorm[i][j + 1]);
+			glTexCoord2f(tabTekstury[i][j + 1][0], tabTekstury[i][j + 1][1]);
+			glVertex3fv(vectors3d[i][j + 1]);
+
 			glEnd();
 
 
 			glBegin(GL_TRIANGLES);
+			glNormal3fv(vektorNorm[i][j + 1]);
+			glTexCoord2f(tabTekstury[i][j + 1][0], tabTekstury[i][j + 1][1]);
+			glVertex3fv(vectors3d[i][j + 1]);
+					   
+			glNormal3fv(vektorNorm[i + 1][j]);
+			glTexCoord2f(tabTekstury[i+1][j][0], tabTekstury[i+1][j][1]);
+			glVertex3fv(vectors3d[i + 1][j]);
+
 			glNormal3fv(vektorNorm[i][j]);
 			glTexCoord2f(tabTekstury[i][j][0], tabTekstury[i][j][1]);
 			glVertex3fv(vectors3d[i][j]);
 
-			glNormal3fv(vektorNorm[i + 1][j]);
-			glTexCoord2f(tabTekstury[i+1][j][0], tabTekstury[i+1][j][1]);
-			glVertex3fv(vectors3d[i + 1][j]);
-
-			glNormal3fv(vektorNorm[i][j + 1]);
-			glTexCoord2f(tabTekstury[i][j+1][0], tabTekstury[i][j+1][1]);
-			glVertex3fv(vectors3d[i][j + 1]);
 			glEnd();
+			}
+
+
+			
 
 		}
 	}
