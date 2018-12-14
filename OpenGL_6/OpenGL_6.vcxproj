@@ -116,6 +116,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="jajko.cpp" />
+    <ClCompile Include="piramida.cpp" />
     <ClCompile Include="trojkat.cpp" />
   </ItemGroup>
   <ItemGroup>
