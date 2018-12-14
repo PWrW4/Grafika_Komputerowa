@@ -28,6 +28,14 @@ static int delta_x = 0;        // ró¿nica pomiêdzy pozycj¹ bie¿¹c¹
 static int delta_y = 0;
 static int delta_scroll = 0;
 
+bool mode1 = true;
+bool mode2 = true;
+bool mode3 = true;
+bool mode4 = true;
+bool mode5 = true;
+
+void RenderScene(void);
+
 // i poprzedni¹ kursora myszy
 
 /*************************************************************************************/
@@ -53,61 +61,87 @@ void piramida()
 {
 	glBegin(GL_TRIANGLES);
 
-	//n trojkat
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(0.0f, 1.0f, 0.0f);
+	if (mode1)
+	{
+		//n trojkat
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex3f(0.0f, 1.0f, 0.0f);
 
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-1.0f, -1.0f, 1.0f);
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex3f(-1.0f, -1.0f, 1.0f);
 
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(1.0f, -1.0f, 1.0f);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex3f(1.0f, -1.0f, 1.0f);
+	}
 
-	//n trojkat
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(0.0f, 1.0f, 0.0f);
+	if (mode2)
+	{
+		//n trojkat
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex3f(0.0f, 1.0f, 0.0f);
 
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(1.0f, -1.0f, 1.0f);
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex3f(1.0f, -1.0f, 1.0f);
 
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(1.0f, -1.0f, -1.0f);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex3f(1.0f, -1.0f, -1.0f);
+	}
 
-	//n trojkat
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(0.0f, 1.0f, 0.0f);
+	if (mode3)
+	{
+		//n trojkat
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex3f(0.0f, 1.0f, 0.0f);
 
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(1.0f, -1.0f, -1.0f);
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex3f(1.0f, -1.0f, -1.0f);
 
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-1.0f, -1.0f, -1.0f);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex3f(-1.0f, -1.0f, -1.0f);
+	}
 
-	//n trojkat
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(0.0f, 1.0f, 0.0f);
+	if (mode4)
+	{
+		//n trojkat
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex3f(0.0f, 1.0f, 0.0f);
 
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-1.0f, -1.0f, -1.0f);
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex3f(-1.0f, -1.0f, -1.0f);
 
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(-1.0f, -1.0f, 1.0f);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex3f(-1.0f, -1.0f, 1.0f);
+	}
+
 
 	glEnd();
 
-	glBegin(GL_QUADS);
+	if (mode5)
+	{
+		glBegin(GL_QUADS);
 
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-1.0f, -1.0f, -1.0f);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(1.0f, -1.0f, -1.0f);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(1.0f, -1.0f, 1.0f);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-1.0f, -1.0f, 1.0f);
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex3f(-1.0f, -1.0f, -1.0f);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex3f(1.0f, -1.0f, -1.0f);
+		glTexCoord2f(1.0f, 1.0f);
+		glVertex3f(1.0f, -1.0f, 1.0f);
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex3f(-1.0f, -1.0f, 1.0f);
 
 
-	glEnd();
+		glEnd();
+	}
+
+
+
+
+
+
+
+
+
+
 }
 
 // Funkcja "bada" stan myszy i ustawia wartoœci odpowiednich zmiennych globalnych
@@ -133,6 +167,18 @@ void Mouse(int btn, int state, int x, int y)
 		status = 0;          // nie zosta³ wciêniêty ¿aden klawisz
 }
 
+
+
+ void keys(unsigned char key, int x, int y)
+ {
+ 	if (key == '1') mode1 = !mode1;
+ 	if (key == '2') mode2 = !mode2;
+ 	if (key == '3') mode3 = !mode3;
+ 	if (key == '4') mode4 = !mode4;
+ 	if (key == '5') mode5 = !mode5;
+
+ 	RenderScene(); // przerysowanie obrazu sceny
+ }
 /*************************************************************************************/
 
 // Funkcja "monitoruje" po³o¿enie kursora myszy i ustawia wartoœci odpowiednich
@@ -570,6 +616,8 @@ void main(void)
 
 	glutMouseFunc(Mouse);
 
+	glutKeyboardFunc(keys);
+	
 	glutMotionFunc(Motion);
 
 	glutReshapeFunc(ChangeSize);
