@@ -12,6 +12,8 @@ var _matrixProjection;
 var _matrixMovement;
 var _matrixView;
 
+var running = false;
+
 var rotationSpeed = 0.001;
 var zoomRatio = -6;
 
@@ -23,7 +25,9 @@ function runWebGL () {
    gl_ctx = gl_getContext(gl_canvas);
    gl_initShaders();
    gl_initBuffers();
-   gl_setMatrix();
+   if(!running){
+      gl_setMatrix();
+   }  
    gl_draw();
 }
 
@@ -237,6 +241,9 @@ function gl_draw() {
    };
 
    // launch animate for the first time
-   animate(0);
-
+   if(!running){
+      // launch animate for the first time
+      animate(0);
+      running=true;
+   }
 }

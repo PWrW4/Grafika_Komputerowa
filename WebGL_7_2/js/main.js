@@ -14,6 +14,8 @@ var _matrixMovement;
 var _matrixView;
 var _cubeTexture;
 
+var running = false;
+
 var rotationSpeed = 0.001;
 var zoomRatio = -6;
 
@@ -29,7 +31,10 @@ function runWebGL () {
    gl_ctx = gl_getContext(gl_canvas);
    gl_initShaders();
    gl_initBuffers();
-   gl_setMatrix();
+   
+   if(!running){
+      gl_setMatrix();
+   }  
    _cubeTexture = gl_initTexture();
    gl_draw();
 }
@@ -234,6 +239,7 @@ function gl_setMatrix () {
 function gl_initTexture() {
    var img = new Image();
 
+   
    if(img1) {
       img.src = 'textures/cubeTexture1.png';
    } else if(img2) {
@@ -277,6 +283,8 @@ function gl_draw() {
 
    var animate = function (time) {
       var dAngle = rotationSpeed * (time - timeOld);
+
+      gl_setMatrix;
 
       if (X) {
          MATRIX.rotateX(_matrixMovement, dAngle);
@@ -324,7 +332,11 @@ function gl_draw() {
       window.requestAnimationFrame(animate);
    };
 
-   // launch animate for the first time
-   animate(0);
+   if(!running){
+      // launch animate for the first time
+      animate(0);
+      running=true;
+   }
+
 
 }
