@@ -1,545 +1,540 @@
-//#define _CRT_SECURE_NO_DEPRECATE
-//#include <windows.h>
-//#include <gl/gl.h>
-//#include <gl/glut.h>
-//#include <iostream>
-//#include <math.h>
-//using namespace std;
-//typedef float point3[3];
-//
-//
-//static GLfloat viewer[] = { 0.0, 0.0, 10.0 };
-//// inicjalizacja po³o¿enia obserwatora
+// #define _CRT_SECURE_NO_DEPRECATE
+// #include <windows.h>
+// #include <gl/gl.h>
+// #include <gl/glut.h>
+// #include <iostream>
+// #include <math.h>
+// using namespace std;
+// typedef float point3[3];
 //
-//static GLfloat thetaArr[] = { 0.0, 0.0, 0.0 }; // trzy k¹ty obrotu
-//static GLfloat theta = 0.0;   // k¹t obrotu obiektu
-//static GLfloat alfa = 0.0;
-//static GLfloat pix2angle;     // przelicznik pikseli na stopnie
 //
-//static GLint status = 0;       // stan klawiszy myszy
-//							   // 0 - nie naciœniêto ¿adnego klawisza
-//							   // 1 - naciœniêty zostaæ lewy klawisz
-//							   // 2 - wcisniety prawy klawisz
+// static GLfloat viewer[] = { 0.0, 0.0, 10.0 };
+// // inicjalizacja po³o¿enia obserwatora
 //
-//static int x_pos_old = 0;       // poprzednia pozycja kursora myszy
-//static int y_pos_old = 0;
-//static int scroll_old = 0;
-//static int delta_x = 0;        // ró¿nica pomiêdzy pozycj¹ bie¿¹c¹
-//static int delta_y = 0;
-//static int delta_scroll = 0;
+// static GLfloat thetaArr[] = { 0.0, 0.0, 0.0 }; // trzy k¹ty obrotu
+// static GLfloat theta = 0.0;   // k¹t obrotu obiektu
+// static GLfloat alfa = 0.0;
+// static GLfloat pix2angle;     // przelicznik pikseli na stopnie
 //
-//// i poprzedni¹ kursora myszy
+// static GLint status = 0;       // stan klawiszy myszy
+// 							   // 0 - nie naciœniêto ¿adnego klawisza
+// 							   // 1 - naciœniêty zostaæ lewy klawisz
+// 							   // 2 - wcisniety prawy klawisz
 //
-///*************************************************************************************/
+// static int x_pos_old = 0;       // poprzednia pozycja kursora myszy
+// static int y_pos_old = 0;
+// static int scroll_old = 0;
+// static int delta_x = 0;        // ró¿nica pomiêdzy pozycj¹ bie¿¹c¹
+// static int delta_y = 0;
+// static int delta_scroll = 0;
 //
-//void spinEgg()
-//{
+// // i poprzedni¹ kursora myszy
 //
-//	thetaArr[0] -= 0.5;
-//	if (thetaArr[0] > 360.0) thetaArr[0] -= 360.0;
+// /*************************************************************************************/
 //
-//	thetaArr[1] -= 0.5;
-//	if (thetaArr[1] > 360.0) thetaArr[1] -= 360.0;
+// void spinEgg()
+// {
 //
-//	thetaArr[2] -= 0.5;
-//	if (thetaArr[2] > 360.0) thetaArr[2] -= 360.0;
+// 	thetaArr[0] -= 0.5;
+// 	if (thetaArr[0] > 360.0) thetaArr[0] -= 360.0;
 //
-//	glutPostRedisplay(); //odœwie¿enie zawartoœci aktualnego okna
-//}
+// 	thetaArr[1] -= 0.5;
+// 	if (thetaArr[1] > 360.0) thetaArr[1] -= 360.0;
 //
+// 	thetaArr[2] -= 0.5;
+// 	if (thetaArr[2] > 360.0) thetaArr[2] -= 360.0;
 //
+// 	glutPostRedisplay(); //odœwie¿enie zawartoœci aktualnego okna
+// }
 //
-//void trojkat()
-//{
-//	glBegin(GL_TRIANGLES);
 //
-//	glTexCoord2f(0.0f, 0.0f);
-//	glVertex3f(0.0f, 1.0f, 0.0f);
 //
-//	glTexCoord2f(0.0f, 1.0f);
-//	glVertex3f(-1.0f, -1.0f, 1.0f);
+// void trojkat()
+// {
+// 	glBegin(GL_TRIANGLES);
 //
-//	glTexCoord2f(1.0f, 0.0f);
-//	glVertex3f(1.0f, -1.0f, 1.0f);
+// 	glTexCoord2f(0.0f, 0.0f);
+// 	glVertex3f(0.0f, 1.0f, 0.0f);
 //
-//	glEnd();
-//}
+// 	glTexCoord2f(0.0f, 1.0f);
+// 	glVertex3f(-1.0f, -1.0f, 1.0f);
 //
-//// Funkcja "bada" stan myszy i ustawia wartoœci odpowiednich zmiennych globalnych
+// 	glTexCoord2f(1.0f, 0.0f);
+// 	glVertex3f(1.0f, -1.0f, 1.0f);
 //
-//void Mouse(int btn, int state, int x, int y)
-//{
+// 	glEnd();
+// }
 //
+// // Funkcja "bada" stan myszy i ustawia wartoœci odpowiednich zmiennych globalnych
 //
-//	if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
-//	{
-//		x_pos_old = x;        // przypisanie aktualnie odczytanej pozycji kursora
-//		y_pos_old = y;
-//		// jako pozycji poprzedniej
-//		status = 1;          // wciêniêty zosta³ lewy klawisz myszy
-//	}
-//	else if (btn == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
-//	{
-//		scroll_old = y;
-//		// jako pozycji poprzedniej
-//		status = 2;          // wciêniêty zosta³ prawy klawisz myszy
-//	}
-//	else
-//		status = 0;          // nie zosta³ wciêniêty ¿aden klawisz
-//}
+// void Mouse(int btn, int state, int x, int y)
+// {
 //
-///*************************************************************************************/
 //
-//// Funkcja "monitoruje" po³o¿enie kursora myszy i ustawia wartoœci odpowiednich
-//// zmiennych globalnych
+// 	if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+// 	{
+// 		x_pos_old = x;        // przypisanie aktualnie odczytanej pozycji kursora
+// 		y_pos_old = y;
+// 		// jako pozycji poprzedniej
+// 		status = 1;          // wciêniêty zosta³ lewy klawisz myszy
+// 	}
+// 	else if (btn == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+// 	{
+// 		scroll_old = y;
+// 		// jako pozycji poprzedniej
+// 		status = 2;          // wciêniêty zosta³ prawy klawisz myszy
+// 	}
+// 	else
+// 		status = 0;          // nie zosta³ wciêniêty ¿aden klawisz
+// }
 //
-//void Motion(GLsizei x, GLsizei y)
-//{
-//	if (status == 1) {
-//		delta_x = x - x_pos_old;     // obliczenie ró¿nicy po³o¿enia kursora myszy
-//		delta_y = y - y_pos_old;
-//		x_pos_old = x;            // podstawienie bie¿¹cego po³o¿enia jako poprzednie
-//		y_pos_old = y;
-//	}
-//	else if (status == 2) {
-//		delta_scroll = y - scroll_old;
-//		scroll_old = y;
-//	}
-//	glutPostRedisplay();     // przerysowanie obrazu sceny
-//}
+// /*************************************************************************************/
 //
-///*************************************************************************************/
 //
 //
-//// Funkcja rysuj¹ca osie uk³adu wspó?rz?dnych
+// void Motion(GLsizei x, GLsizei y)
+// {
+// 	if (status == 1) {
+// 		delta_x = x - x_pos_old;     // obliczenie ró¿nicy po³o¿enia kursora myszy
+// 		delta_y = y - y_pos_old;
+// 		x_pos_old = x;            // podstawienie bie¿¹cego po³o¿enia jako poprzednie
+// 		y_pos_old = y;
+// 	}
+// 	else if (status == 2) {
+// 		delta_scroll = y - scroll_old;
+// 		scroll_old = y;
+// 	}
+// 	glutPostRedisplay();     // przerysowanie obrazu sceny
+// }
 //
+// /*************************************************************************************/
 //
 //
-//void Axes(void)
-//{
+// // Funkcja rysuj¹ca osie uk³adu wspó?rz?dnych
 //
-//	point3  x_min = { -5.0, 0.0, 0.0 };
-//	point3  x_max = { 5.0, 0.0, 0.0 };
-//	// pocz?tek i koniec obrazu osi x
 //
-//	point3  y_min = { 0.0, -5.0, 0.0 };
-//	point3  y_max = { 0.0, 5.0, 0.0 };
-//	// pocz?tek i koniec obrazu osi y
 //
-//	point3  z_min = { 0.0, 0.0, -5.0 };
-//	point3  z_max = { 0.0, 0.0, 5.0 };
-//	//  pocz?tek i koniec obrazu osi y
+// void Axes(void)
+// {
 //
-//	glColor3f(1.0f, 0.0f, 0.0f);  // kolor rysowania osi - czerwony
-//	glBegin(GL_LINES); // rysowanie osi x
+// 	point3  x_min = { -5.0, 0.0, 0.0 };
+// 	point3  x_max = { 5.0, 0.0, 0.0 };
+// 	// pocz?tek i koniec obrazu osi x
 //
-//	glVertex3fv(x_min);
-//	glVertex3fv(x_max);
+// 	point3  y_min = { 0.0, -5.0, 0.0 };
+// 	point3  y_max = { 0.0, 5.0, 0.0 };
+// 	// pocz?tek i koniec obrazu osi y
 //
-//	glEnd();
+// 	point3  z_min = { 0.0, 0.0, -5.0 };
+// 	point3  z_max = { 0.0, 0.0, 5.0 };
+// 	//  pocz?tek i koniec obrazu osi y
 //
-//	glColor3f(0.0f, 1.0f, 0.0f);  // kolor rysowania - zielony
-//	glBegin(GL_LINES);  // rysowanie osi y
+// 	glColor3f(1.0f, 0.0f, 0.0f);  // kolor rysowania osi - czerwony
+// 	glBegin(GL_LINES); // rysowanie osi x
 //
-//	glVertex3fv(y_min);
-//	glVertex3fv(y_max);
+// 	glVertex3fv(x_min);
+// 	glVertex3fv(x_max);
 //
-//	glEnd();
+// 	glEnd();
 //
-//	glColor3f(0.0f, 0.0f, 1.0f);  // kolor rysowania - niebieski
-//	glBegin(GL_LINES); // rysowanie osi z
+// 	glColor3f(0.0f, 1.0f, 0.0f);  // kolor rysowania - zielony
+// 	glBegin(GL_LINES);  // rysowanie osi y
 //
-//	glVertex3fv(z_min);
-//	glVertex3fv(z_max);
+// 	glVertex3fv(y_min);
+// 	glVertex3fv(y_max);
 //
-//	glEnd();
+// 	glEnd();
 //
-//}
+// 	glColor3f(0.0f, 0.0f, 1.0f);  // kolor rysowania - niebieski
+// 	glBegin(GL_LINES); // rysowanie osi z
 //
-///*************************************************************************************/
+// 	glVertex3fv(z_min);
+// 	glVertex3fv(z_max);
 //
-//// Funkcja okreœlaj¹ca co ma byæ rysowane (zawsze wywo³ywana, gdy trzeba
-//// przerysowaæ scenê)
+// 	glEnd();
 //
+// }
 //
+// /*************************************************************************************/
 //
-//void RenderScene(void)
-//{
 //
-//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//	// Czyszczenie okna aktualnym kolorem czyszcz¹cym
 //
-//	glLoadIdentity();
-//	// Czyszczenie macierzy bie??cej
-//	float scroll = delta_scroll * pix2angle*0.07;
-//	if (status == 2 && ((viewer[2] <= 6 && scroll > 0) || (scroll < 0 && viewer[2] >= 20) || (viewer[2] > 6 && viewer[2] < 20))) {
 //
-//		viewer[2] += scroll;
-//	}
-//	gluLookAt(viewer[0], viewer[1], viewer[2], 0.0, 0.0, 1.0, 0.0, 1.0, 0.0);
-//	// Zdefiniowanie po³o¿enia obserwatora
 //
+// void RenderScene(void)
+// {
 //
-//	if (status == 1)                     // jeœli lewy klawisz myszy wciêniêty
-//	{
-//		theta += delta_x * pix2angle;    // modyfikacja k¹ta obrotu o kat proporcjonalny
-//		alfa += delta_y * pix2angle;
+// 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+// 	// Czyszczenie okna aktualnym kolorem czyszcz¹cym
 //
-//	}
+// 	glLoadIdentity();
+// 	// Czyszczenie macierzy bie??cej
+// 	float scroll = delta_scroll * pix2angle*0.07;
+// 	if (status == 2 && ((viewer[2] <= 6 && scroll > 0) || (scroll < 0 && viewer[2] >= 20) || (viewer[2] > 6 && viewer[2] < 20))) {
 //
-//	glRotatef(thetaArr[0], 1.0, 0.0, 0.0);
+// 		viewer[2] += scroll;
+// 	}
+// 	gluLookAt(viewer[0], viewer[1], viewer[2], 0.0, 0.0, 1.0, 0.0, 1.0, 0.0);
+// 	// Zdefiniowanie po³o¿enia obserwatora
 //
-//	glRotatef(thetaArr[1], 0.0, 1.0, 0.0);
 //
-//	glRotatef(thetaArr[2], 0.0, 0.0, 1.0);
-//	glRotatef(theta, 0.0, 1.0, 0.0);  //obrót obiektu o nowy k¹t
-//	glRotatef(alfa, 1.0, 0.0, 0.0);  //obrót obiektu o nowy k¹t
+// 	if (status == 1)                     // jeœli lewy klawisz myszy wciêniêty
+// 	{
+// 		theta += delta_x * pix2angle;    // modyfikacja k¹ta obrotu o kat proporcjonalny
+// 		alfa += delta_y * pix2angle;
 //
+// 	}
 //
+// 	glRotatef(thetaArr[0], 1.0, 0.0, 0.0);
 //
-//	glColor3f(1.0f, 23.0f, 1.0f);
-//	// Ustawienie koloru rysowania na bia³y
+// 	glRotatef(thetaArr[1], 0.0, 1.0, 0.0);
 //
-//	trojkat();
-//	// Narysowanie czajnika
+// 	glRotatef(thetaArr[2], 0.0, 0.0, 1.0);
+// 	glRotatef(theta, 0.0, 1.0, 0.0);  //obrót obiektu o nowy k¹t
+// 	glRotatef(alfa, 1.0, 0.0, 0.0);  //obrót obiektu o nowy k¹t
 //
-//	glFlush();
-//	// Przekazanie poleceñ rysuj¹cych do wykonania
 //
-//	glutSwapBuffers();
 //
+// 	glColor3f(1.0f, 23.0f, 1.0f);
+// 	// Ustawienie koloru rysowania na bia³y
 //
+// 	trojkat();
+// 	// Narysowanie czajnika
 //
-//}
-///*************************************************************************************/
+// 	glFlush();
+// 	// Przekazanie poleceñ rysuj¹cych do wykonania
 //
-//// Funkcja ustalaj¹ca stan renderowania
+// 	glutSwapBuffers();
 //
-///*************************************************************************************/
-// // Funkcja wczytuje dane obrazu zapisanego w formacie TGA w pliku o nazwie
-// // FileName, alokuje pamiêæ i zwraca wskaŸnik (pBits) do bufora w którym
-// // umieszczone s¹ dane.
-// // Ponadto udostêpnia szerokoœæ (ImWidth), wysokoœæ (ImHeight) obrazu
-// // tekstury oraz dane opisuj¹ce format obrazu wed³ug specyfikacji OpenGL
-// // (ImComponents) i (ImFormat).
-// // Jest to bardzo uproszczona wersja funkcji wczytuj¹cej dane z pliku TGA.
-// // Dzia³a tylko dla obrazów wykorzystuj¹cych 8, 24, or 32 bitowy kolor.
-// // Nie obs³uguje plików w formacie TGA kodowanych z kompresj¹ RLE.
-///*************************************************************************************/
 //
 //
-//GLbyte *LoadTGAImage(const char *FileName, GLint *ImWidth, GLint *ImHeight, GLint *ImComponents, GLenum *ImFormat)
-//{
+// }
+// /*************************************************************************************/
 //
-//	/*************************************************************************************/
+// // Funkcja ustalaj¹ca stan renderowania
 //
-//	// Struktura dla nag³ówka pliku  TGA
+// /*************************************************************************************/
+//  // Funkcja wczytuje dane obrazu zapisanego w formacie TGA w pliku o nazwie
+//  // FileName, alokuje pamiêæ i zwraca wskaŸnik (pBits) do bufora w którym
+//  // umieszczone s¹ dane.
+//  // Ponadto udostêpnia szerokoœæ (ImWidth), wysokoœæ (ImHeight) obrazu
+//  // tekstury oraz dane opisuj¹ce format obrazu wed³ug specyfikacji OpenGL
+//  // (ImComponents) i (ImFormat).
+//  // Jest to bardzo uproszczona wersja funkcji wczytuj¹cej dane z pliku TGA.
+//  // Dzia³a tylko dla obrazów wykorzystuj¹cych 8, 24, or 32 bitowy kolor.
+//  // Nie obs³uguje plików w formacie TGA kodowanych z kompresj¹ RLE.
+// /*************************************************************************************/
 //
 //
-//#pragma pack(1)           
-//	typedef struct
-//	{
-//		GLbyte    idlength;
-//		GLbyte    colormaptype;
-//		GLbyte    datatypecode;
-//		unsigned short    colormapstart;
-//		unsigned short    colormaplength;
-//		unsigned char     colormapdepth;
-//		unsigned short    x_orgin;
-//		unsigned short    y_orgin;
-//		unsigned short    width;
-//		unsigned short    height;
-//		GLbyte    bitsperpixel;
-//		GLbyte    descriptor;
-//	}TGAHEADER;
-//#pragma pack(8)
+// GLbyte *LoadTGAImage(const char *FileName, GLint *ImWidth, GLint *ImHeight, GLint *ImComponents, GLenum *ImFormat)
+// {
 //
-//	FILE *pFile;
-//	TGAHEADER tgaHeader;
-//	unsigned long lImageSize;
-//	short sDepth;
-//	GLbyte    *pbitsperpixel = NULL;
+// 	/*************************************************************************************/
 //
+// 	// Struktura dla nag³ówka pliku  TGA
 //
-//	/*************************************************************************************/
 //
-//	// Wartoœci domyœlne zwracane w przypadku b³êdu
+// #pragma pack(1)           
+// 	typedef struct
+// 	{
+// 		GLbyte    idlength;
+// 		GLbyte    colormaptype;
+// 		GLbyte    datatypecode;
+// 		unsigned short    colormapstart;
+// 		unsigned short    colormaplength;
+// 		unsigned char     colormapdepth;
+// 		unsigned short    x_orgin;
+// 		unsigned short    y_orgin;
+// 		unsigned short    width;
+// 		unsigned short    height;
+// 		GLbyte    bitsperpixel;
+// 		GLbyte    descriptor;
+// 	}TGAHEADER;
+// #pragma pack(8)
 //
-//	*ImWidth = 0;
-//	*ImHeight = 0;
-//	*ImFormat = GL_BGR_EXT;
-//	*ImComponents = GL_RGB8;
+// 	FILE *pFile;
+// 	TGAHEADER tgaHeader;
+// 	unsigned long lImageSize;
+// 	short sDepth;
+// 	GLbyte    *pbitsperpixel = NULL;
 //
-//	pFile = fopen(FileName, "rb");
-//	if (pFile == NULL)
-//		return NULL;
 //
-//	/*************************************************************************************/
-//	// Przeczytanie nag³ówka pliku 
+// 	/*************************************************************************************/
 //
+// 	// Wartoœci domyœlne zwracane w przypadku b³êdu
 //
-//	fread(&tgaHeader, sizeof(TGAHEADER), 1, pFile);
+// 	*ImWidth = 0;
+// 	*ImHeight = 0;
+// 	*ImFormat = GL_BGR_EXT;
+// 	*ImComponents = GL_RGB8;
 //
+// 	pFile = fopen(FileName, "rb");
+// 	if (pFile == NULL)
+// 		return NULL;
 //
-//	/*************************************************************************************/
+// 	/*************************************************************************************/
+// 	// Przeczytanie nag³ówka pliku 
 //
-//	// Odczytanie szerokoœci, wysokoœci i g³êbi obrazu
 //
-//	*ImWidth = tgaHeader.width;
-//	*ImHeight = tgaHeader.height;
-//	sDepth = tgaHeader.bitsperpixel / 8;
+// 	fread(&tgaHeader, sizeof(TGAHEADER), 1, pFile);
 //
 //
-//	/*************************************************************************************/
-//	// Sprawdzenie, czy g³êbia spe³nia za³o¿one warunki (8, 24, lub 32 bity)
+// 	/*************************************************************************************/
 //
-//	if (tgaHeader.bitsperpixel != 8 && tgaHeader.bitsperpixel != 24 && tgaHeader.bitsperpixel != 32)
-//		return NULL;
+// 	// Odczytanie szerokoœci, wysokoœci i g³êbi obrazu
 //
-//	/*************************************************************************************/
+// 	*ImWidth = tgaHeader.width;
+// 	*ImHeight = tgaHeader.height;
+// 	sDepth = tgaHeader.bitsperpixel / 8;
 //
-//	// Obliczenie rozmiaru bufora w pamiêci
 //
+// 	/*************************************************************************************/
+// 	// Sprawdzenie, czy g³êbia spe³nia za³o¿one warunki (8, 24, lub 32 bity)
 //
-//	lImageSize = tgaHeader.width * tgaHeader.height * sDepth;
+// 	if (tgaHeader.bitsperpixel != 8 && tgaHeader.bitsperpixel != 24 && tgaHeader.bitsperpixel != 32)
+// 		return NULL;
 //
+// 	/*************************************************************************************/
 //
-//	/*************************************************************************************/
+// 	// Obliczenie rozmiaru bufora w pamiêci
 //
-//	// Alokacja pamiêci dla danych obrazu
 //
+// 	lImageSize = tgaHeader.width * tgaHeader.height * sDepth;
 //
-//	pbitsperpixel = (GLbyte*)malloc(lImageSize * sizeof(GLbyte));
 //
-//	if (pbitsperpixel == NULL)
-//		return NULL;
+// 	/*************************************************************************************/
 //
-//	if (fread(pbitsperpixel, lImageSize, 1, pFile) != 1)
-//	{
-//		free(pbitsperpixel);
-//		return NULL;
-//	}
+// 	// Alokacja pamiêci dla danych obrazu
 //
 //
-//	/*************************************************************************************/
+// 	pbitsperpixel = (GLbyte*)malloc(lImageSize * sizeof(GLbyte));
 //
-//	// Ustawienie formatu OpenGL
+// 	if (pbitsperpixel == NULL)
+// 		return NULL;
 //
+// 	if (fread(pbitsperpixel, lImageSize, 1, pFile) != 1)
+// 	{
+// 		free(pbitsperpixel);
+// 		return NULL;
+// 	}
 //
-//	switch (sDepth)
 //
-//	{
+// 	/*************************************************************************************/
 //
-//	case 3:
+// 	// Ustawienie formatu OpenGL
 //
-//		*ImFormat = GL_BGR_EXT;
 //
-//		*ImComponents = GL_RGB8;
+// 	switch (sDepth)
 //
-//		break;
+// 	{
 //
-//	case 4:
+// 	case 3:
 //
-//		*ImFormat = GL_BGRA_EXT;
+// 		*ImFormat = GL_BGR_EXT;
 //
-//		*ImComponents = GL_RGBA8;
+// 		*ImComponents = GL_RGB8;
 //
-//		break;
+// 		break;
 //
-//	case 1:
+// 	case 4:
 //
-//		*ImFormat = GL_LUMINANCE;
+// 		*ImFormat = GL_BGRA_EXT;
 //
-//		*ImComponents = GL_LUMINANCE8;
+// 		*ImComponents = GL_RGBA8;
 //
-//		break;
+// 		break;
 //
-//	};
+// 	case 1:
 //
+// 		*ImFormat = GL_LUMINANCE;
 //
+// 		*ImComponents = GL_LUMINANCE8;
 //
-//	fclose(pFile);
+// 		break;
 //
+// 	};
 //
 //
-//	return pbitsperpixel;
 //
-//}
+// 	fclose(pFile);
 //
-///*************************************************************************************/
 //
-//void MyInit(void)
-//{
 //
-//	/*************************************************************************************/
+// 	return pbitsperpixel;
 //
-//// Zmienne dla obrazu tekstury
+// }
 //
+// /*************************************************************************************/
 //
+// void MyInit(void)
+// {
 //
-//	GLbyte *pBytes;
-//	GLint ImWidth, ImHeight, ImComponents;
-//	GLenum ImFormat;
+// 	/*************************************************************************************/
 //
-//	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+// // Zmienne dla obrazu tekstury
 //
-//	GLfloat mat_ambient[] = { 1.0,1.0, 1.0, 1 };
-//	GLfloat mat_diffuse[] = { 1.0, 1.0, 1.0, 1 };
-//	GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-//	GLfloat mat_shininess = { 20.0 };
-//	GLfloat light_position[] = { 0.0, 0.0, 30.0, 1.0 };
-//	GLfloat light_ambient[] = { 1.0, 1.0, 1.0, 1.0 };
-//	GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
-//	GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-//	GLfloat att_constant = { 1.0 };
-//	GLfloat att_linear = { (GLfloat) 0.05 };
-//	GLfloat att_quadratic = { (GLfloat) 0.001 };
 //
-//	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-//	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-//	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-//	glMaterialf(GL_FRONT, GL_SHININESS, mat_shininess);
 //
-//	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
-//	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-//	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-//	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+// 	GLbyte *pBytes;
+// 	GLint ImWidth, ImHeight, ImComponents;
+// 	GLenum ImFormat;
 //
-//	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, att_constant);
-//	glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, att_linear);
-//	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, att_quadratic);
+// 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 //
-//	glShadeModel(GL_SMOOTH); // w³aczenie ³agodnego cieniowania
-//	glEnable(GL_LIGHTING);   // w³aczenie systemu oœwietlenia sceny
-//	glEnable(GL_LIGHT0);     // w³¹czenie Ÿród³a o numerze 0
-//	glEnable(GL_DEPTH_TEST); // w³¹czenie mechanizmu z-bufora
+// 	GLfloat mat_ambient[] = { 1.0,1.0, 1.0, 1 };
+// 	GLfloat mat_diffuse[] = { 1.0, 1.0, 1.0, 1 };
+// 	GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+// 	GLfloat mat_shininess = { 20.0 };
+// 	GLfloat light_position[] = { 0.0, 0.0, 30.0, 1.0 };
+// 	GLfloat light_ambient[] = { 1.0, 1.0, 1.0, 1.0 };
+// 	GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+// 	GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+// 	GLfloat att_constant = { 1.0 };
+// 	GLfloat att_linear = { (GLfloat) 0.05 };
+// 	GLfloat att_quadratic = { (GLfloat) 0.001 };
 //
-//	/*************************************************************************************/
+// 	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+// 	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+// 	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+// 	glMaterialf(GL_FRONT, GL_SHININESS, mat_shininess);
 //
-//// Teksturowanie bêdzie prowadzone tyko po jednej stronie œciany
+// 	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+// 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+// 	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+// 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 //
-//	glEnable(GL_CULL_FACE);
+// 	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, att_constant);
+// 	glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, att_linear);
+// 	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, att_quadratic);
 //
-//	/*************************************************************************************/
+// 	glShadeModel(GL_SMOOTH); // w³aczenie ³agodnego cieniowania
+// 	glEnable(GL_LIGHTING);   // w³aczenie systemu oœwietlenia sceny
+// 	glEnable(GL_LIGHT0);     // w³¹czenie Ÿród³a o numerze 0
+// 	glEnable(GL_DEPTH_TEST); // w³¹czenie mechanizmu z-bufora
 //
-//	//  Przeczytanie obrazu tekstury z pliku o nazwie tekstura.tga
+// 	/*************************************************************************************/
 //
-//	pBytes = LoadTGAImage("N1_t.tga", &ImWidth, &ImHeight, &ImComponents, &ImFormat);
+// // Teksturowanie bêdzie prowadzone tyko po jednej stronie œciany
 //
-//	/*************************************************************************************/
+// 	glEnable(GL_CULL_FACE);
 //
-//   // Zdefiniowanie tekstury 2-D
+// 	/*************************************************************************************/
 //
-//	glTexImage2D(GL_TEXTURE_2D, 0, ImComponents, ImWidth, ImHeight, 0, ImFormat, GL_UNSIGNED_BYTE, pBytes);
+// 	//  Przeczytanie obrazu tekstury z pliku o nazwie tekstura.tga
 //
-//	/*************************************************************************************/
+// 	pBytes = LoadTGAImage("N1_t.tga", &ImWidth, &ImHeight, &ImComponents, &ImFormat);
 //
-//	// Zwolnienie pamiêci
+// 	/*************************************************************************************/
 //
-//	free(pBytes);
+//    // Zdefiniowanie tekstury 2-D
 //
-//	/*************************************************************************************/
+// 	glTexImage2D(GL_TEXTURE_2D, 0, ImComponents, ImWidth, ImHeight, 0, ImFormat, GL_UNSIGNED_BYTE, pBytes);
 //
-//	// W³¹czenie mechanizmu teksturowania
+// 	/*************************************************************************************/
 //
-//	glEnable(GL_TEXTURE_2D);
+// 	// Zwolnienie pamiêci
 //
-//	/*************************************************************************************/
+// 	free(pBytes);
 //
-//	// Ustalenie trybu teksturowania
+// 	/*************************************************************************************/
 //
-//	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+// 	// W³¹czenie mechanizmu teksturowania
 //
-//	/*************************************************************************************/
+// 	glEnable(GL_TEXTURE_2D);
 //
-//	// Okreœlenie sposobu nak³adania tekstur
+// 	/*************************************************************************************/
 //
-//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//}
-///*************************************************************************************/
+// 	// Ustalenie trybu teksturowania
 //
-//// Funkcja ma za zadanie utrzymanie sta³ych proporcji rysowanych
-//// w przypadku zmiany rozmiarów okna.
-//// Parametry vertical i horizontal (wysokoœæ i szerokoœæ okna) s¹
-//// przekazywane do funkcji za ka¿dym razem gdy zmieni siê rozmiar okna.
+// 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 //
+// 	/*************************************************************************************/
 //
+// 	// Okreœlenie sposobu nak³adania tekstur
 //
-//void ChangeSize(GLsizei horizontal, GLsizei vertical)
-//{
-//	pix2angle = 360.0 / (float)horizontal;
+// 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+// 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+// }
+// /*************************************************************************************/
 //
-//	glMatrixMode(GL_PROJECTION);
-//	// Prze³¹czenie macierzy bie¿¹cej na macierz projekcji
 //
-//	glLoadIdentity();
-//	// Czyszcznie macierzy bie¿¹cej
-//	cout << vertical << " horizontal " << horizontal << endl;
 //
-//	GLdouble aspect = (GLdouble)horizontal / vertical;
 //
-//	gluPerspective(70, (float)aspect, 1.0, 30.0);
-//	// Ustawienie parametrów dla rzutu perspektywicznego
 //
+// void ChangeSize(GLsizei horizontal, GLsizei vertical)
+// {
+// 	pix2angle = 360.0 / (float)horizontal;
 //
-//	glViewport(0, 0, horizontal, vertical);
-//	// Ustawienie wielkoœci okna okna widoku (viewport) w zale¿noœci
-//	// relacji pomiêdzy wysokoœci¹ i szerokoœci¹ okna
+// 	glMatrixMode(GL_PROJECTION);
+// 	// Prze³¹czenie macierzy bie¿¹cej na macierz projekcji
 //
-//	glMatrixMode(GL_MODELVIEW);
-//	// Prze³¹czenie macierzy bie¿¹cej na macierz widoku modelu 
+// 	glLoadIdentity();
+// 	// Czyszcznie macierzy bie¿¹cej
+// 	cout << vertical << " horizontal " << horizontal << endl;
 //
-//	glLoadIdentity();
-//	// Czyszczenie macierzy bie¿¹cej
+// 	GLdouble aspect = (GLdouble)horizontal / vertical;
 //
-//}
+// 	gluPerspective(70, (float)aspect, 1.0, 30.0);
+// 	// Ustawienie parametrów dla rzutu perspektywicznego
 //
-///*************************************************************************************/
 //
-//// G³ówny punkt wejœcia programu. Program dzia³a w trybie konsoli
+// 	glViewport(0, 0, horizontal, vertical);
+// 	// Ustawienie wielkoœci okna okna widoku (viewport) w zale¿noœci
+// 	// relacji pomiêdzy wysokoœci¹ i szerokoœci¹ okna
 //
+// 	glMatrixMode(GL_MODELVIEW);
+// 	// Prze³¹czenie macierzy bie¿¹cej na macierz widoku modelu 
 //
+// 	glLoadIdentity();
+// 	// Czyszczenie macierzy bie¿¹cej
 //
-//void main(void)
-//{
-//	char *myargv[1];
-//	int myargc = 1;
-//	myargv[0] = _strdup("Myappname");
-//	glutInit(&myargc, myargv);
-//	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+// }
 //
-//	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+// /*************************************************************************************/
 //
-//	glutInitWindowSize(1000, 1000);
+// // G³ówny punkt wejœcia programu. Program dzia³a w trybie konsoli
 //
-//	glutCreateWindow("Oœwietlenie jajka");
 //
-//	//glutIdleFunc(spinEgg);
 //
-//	glutDisplayFunc(RenderScene);
-//	// Okreœlenie, ¿e funkcja RenderScene bêdzie funkcj¹ zwrotn¹
-//	// (callback function).  Bêdzie ona wywo³ywana za ka¿dym razem
-//	// gdy zajdzie potrzeba przerysowania okna
+// void main(void)
+// {
+// 	char *myargv[1];
+// 	int myargc = 1;
+// 	myargv[0] = _strdup("Myappname");
+// 	glutInit(&myargc, myargv);
+// 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 //
+// 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 //
-//	glutMouseFunc(Mouse);
+// 	glutInitWindowSize(1000, 1000);
 //
-//	glutMotionFunc(Motion);
+// 	glutCreateWindow("Oœwietlenie jajka");
 //
-//	glutReshapeFunc(ChangeSize);
-//	// Dla aktualnego okna ustala funkcjê zwrotn¹ odpowiedzialn¹
-//	// za zmiany rozmiaru okna                      
+// 	//glutIdleFunc(spinEgg);
 //
+// 	glutDisplayFunc(RenderScene);
+// 	// Okreœlenie, ¿e funkcja RenderScene bêdzie funkcj¹ zwrotn¹
+// 	// (callback function).  Bêdzie ona wywo³ywana za ka¿dym razem
+// 	// gdy zajdzie potrzeba przerysowania okna
 //
-//	MyInit();
-//	// Funkcja MyInit() (zdefiniowana powy¿ej) wykonuje wszelkie
-//	// inicjalizacje konieczne  przed przyst¹pieniem do renderowania
 //
-//	glEnable(GL_DEPTH_TEST);
-//	// W³¹czenie mechanizmu usuwania niewidocznych elementów sceny
+// 	glutMouseFunc(Mouse);
 //
-//	glutMainLoop();
-//	// Funkcja uruchamia szkielet biblioteki GLUT
+// 	glutMotionFunc(Motion);
 //
-//}
+// 	glutReshapeFunc(ChangeSize);
+// 	// Dla aktualnego okna ustala funkcjê zwrotn¹ odpowiedzialn¹
+// 	// za zmiany rozmiaru okna                      
+//
+//
+// 	MyInit();
+// 	// Funkcja MyInit() (zdefiniowana powy¿ej) wykonuje wszelkie
+// 	// inicjalizacje konieczne  przed przyst¹pieniem do renderowania
+//
+// 	glEnable(GL_DEPTH_TEST);
+// 	// W³¹czenie mechanizmu usuwania niewidocznych elementów sceny
+//
+// 	glutMainLoop();
+// 	// Funkcja uruchamia szkielet biblioteki GLUT
+//
+// }
